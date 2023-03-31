@@ -36,7 +36,10 @@ class ListApi {
   static const String login="api/userauth/login";
 
   /// branches end point
-
   static const String allBranches='Branches/GetBranches/';
+
+
+  /// lang end point
+  static const String checkLang='appTranslator/CheckLang';
 
 }

@@ -95,7 +95,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style drawable.
   cupertino_icons: ^1.0.2
+  #use for get devices dirs pathes
   path_provider: ^2.0.14
+  # use for scan qr path
+  qr_code_scanner: ^1.0.1
 
 
 

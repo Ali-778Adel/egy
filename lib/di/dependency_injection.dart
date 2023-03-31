@@ -13,6 +13,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import '../data/local_data_source/branches/branches_local_data.dart';
 import '../data/local_data_source/payment_auth/payment_auth_local_data/payment_auth_local_data.dart';
 import '../data/local_data_source/profile/profile_local_data.dart';
+import '../data/local_data_source/sd.dart';
 import '../data/local_data_source/theme/them_local_data.dart';
 import '../data/remote_data_source/branches/branches_remote_data.dart';
 import '../data/remote_data_source/payment/payment_romte_data.dart';
@@ -102,6 +103,7 @@ void registerLocalDataSources(){
   sl.registerLazySingleton<PaymentAuthLocalData>(() => PaymentAuthLocalDataImpl());
   sl.registerLazySingleton<BranchesLocalData>(() => BranchesLocalDataImpl());
   sl.registerLazySingleton<ProfileLocalData>(() => ProfileLocalDataImpl());
+  sl.registerLazySingleton<SDLocalData>(() => SDLocalDataImpl());
 }
 
 void initRepos() {

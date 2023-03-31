@@ -1,14 +1,19 @@
 package info.spsolution.esealsdclient
 
+
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import io.flutter.embedding.android.FlutterFragmentActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugins.GeneratedPluginRegistrant
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
@@ -16,7 +21,56 @@ import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import java.util.ArrayList
 
-class MainActivity : AppCompatActivity() {
+data class ConfigData(
+    val signature: String,
+    val pinCode: String,
+
+)
+
+
+
+class MainActivity : FlutterFragmentActivity() {
+
+    private val CHANNEL = "com.example.native_method_channel"
+    private val CHANNEL1 = "configs_channel"
+
+    var sig:String="";
+    var pin:String="";
+
+    override
+    fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+            if (call.method == "onCreate1") {
+                val  signature=call.argument<String>("signature")
+                val  pinCode=call.argument<String>("pinCode")
+                if (signature != null && pinCode !=null) {
+                    sig=signature
+                    pin=pinCode
+                }
+                val greetings  = onCreate1()
+                result.success(greetings)
+            }
+        }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,CHANNEL1).setMethodCallHandler{
+            call,result ->
+            if(call.method=="getConfigs"){
+                val  signature=call.argument<String>("signature")
+                val  pinCode=call.argument<String>("pinCode")
+                if (signature != null && pinCode !=null) {
+                    sig=signature
+                    pin=pinCode
+                }
+
+                println("signature is ${signature}")
+                println("signature is ${pinCode}")
+
+                HelloFromJNI("sdfjshfgfd",pin,sig)
+                result.success("i recieved method ");
+            }
+        }
+    }
+
 
     private val startTime = (15 * 60 * 1000 // 15 MINS IDLE TIME
             ).toLong()
@@ -30,32 +84,55 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        HelloFromJNI("sddfd")
-        val tv : TextView = findViewById(R.id.textView) as TextView;
-        tv.text = "This test takes a long time, do not rotate.";
+    @SuppressLint("SetTextI18n")
+    fun  onCreate1(): String {
+        try {
+            System.loadLibrary("esealsdclient")
+            println("i init it_____________________")
+        } catch (e: UnsatisfiedLinkError) {
+            println("ther is exception")
+
+            println(e)
+        } finally {
+//            HelloFromJNI("sdfjshfgfd",pin,sig)
+            println("i will tested successfully")
+        }
+
+
+
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_main)
+//
+        var tv:String="";
+        tv= "This test takes a long time, do not rotate.";
 
         verifyStoragePermissions(this);
 
         val thePackage = this.applicationContext.packageName
-        val appPath = "/Android/data/" + thePackage.toString();
+        val appPath = "/Android/data/${thePackage.toString()}"
 
         val sdcards = getRosettaSdCardDataPaths(this, appPath)
 
-//        if (sdcards.isEmpty()) {
-//            tv.text = "SPYRUS Rosetta SD not found!";
-//            return;
-//        }
+        if (sdcards.isEmpty()) {
+            tv = "SPYRUS Rosetta SD not found!";
+            println(tv)
+            return tv;
+        }
 
         checkRosettaSmartIO(sdcards[0], appPath)
 
         MountInfo.pathtouse = sdcards[0]
 
-        tv.text = "Please wait";
+        tv = "Please wait";
 
-//        TestESealSD(tv, MountInfo.pathtouse+appPath);
+
+       var v= TestESealSD( MountInfo.pathtouse+appPath);
+        if(v.isNotEmpty()){
+            tv=v
+            return  tv
+        }
+
+        return tv;
     }
 
     private fun checkRosettaSmartIO(path: String?, appPath: String?): Boolean {
@@ -164,9 +241,10 @@ class MainActivity : AppCompatActivity() {
         return result.toTypedArray()
     }
 
-    private fun TestESealSD(tv: TextView, sdcardpath: String): Boolean {
+    private fun TestESealSD( sdcardpath: String): String {
+        var tv:String=""
         Thread(Runnable {
-            val tokenInfo = HelloFromJNI(sdcardpath);
+            val tokenInfo = HelloFromJNI(sdcardpath,pin,sig);
             if(tokenInfo is TokenInfo) {
                 var certificate: X509Certificate? = null;
                 if(tokenInfo.getCert()!=null) {
@@ -178,18 +256,19 @@ class MainActivity : AppCompatActivity() {
                                 )
                             ) as X509Certificate
                     FinalizeFromJNI();
-                    tv.post { tv.text = "Init\nLogin OK \n" + certificate.subjectDN.name };
+                     tv = "Init\nLogin OK \n" + certificate.subjectDN.name
                 }
                 else {
-                    tv.post { tv.text = "Init\nLogin OK\nNO CERT" };
+                    tv= "Init\nLogin OK\nNO CERT" ;
                 }
             }
             else
             {
-                tv.post { tv.text = tokenInfo.toString() };
+                 tv= tokenInfo.toString()
+
             }
         }).start();
-        return true;
+        return tv
     }
     companion object {
       init {
@@ -207,5 +286,5 @@ class MyCountDownTimer(startTime: Long, interval: Long) :
 
 }
 
-external fun HelloFromJNI(path: String): Object
+external fun HelloFromJNI(path: String,piCode:String,signature :String): Object
 external fun FinalizeFromJNI(): Boolean

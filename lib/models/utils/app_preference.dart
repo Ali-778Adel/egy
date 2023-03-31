@@ -9,6 +9,7 @@ import 'package:fl_egypt_trust/models/entities/payment_entities/payment_service_
 import 'package:fl_egypt_trust/models/entities/payment_entities/payment_subscription_model.dart';
 import 'package:fl_egypt_trust/models/entities/payment_entities/paymnet_states_model.dart';
 import 'package:fl_egypt_trust/models/entities/public_entities/user_model.dart';
+import 'package:fl_egypt_trust/models/entities/sd_entities/sd_configs_entity.dart';
 import 'package:fl_egypt_trust/models/entities/theme_enities/colors_entity.dart';
 import 'package:fl_egypt_trust/models/entities/theme_enities/icons_entity.dart';
 import 'package:flutter/material.dart';
@@ -182,6 +183,7 @@ getPaymentOrderRefNumber({required String merchantNumber})async{
    Hive.registerAdapter(PaymentFormsResultModelAdapter());
    Hive.registerAdapter(PaymentAuthModelAdapter());
    Hive.registerAdapter(BranchesModelAdapter());
+   Hive.registerAdapter(SdConfigsEntityAdapter());
 
 
    /// REGISTER_HOME_ADAPTERS

@@ -1,5 +1,6 @@
 import 'package:fl_egypt_trust/ui/screens/bottom_navigations/bottom_navigation_handler.dart';
 import 'package:fl_egypt_trust/ui/screens/main/redesign_home/pages/new_home_screen_shimmer.dart';
+import 'package:fl_egypt_trust/ui/screens/sd_screens/pages/qr_scanner.dart';
 import 'package:fl_egypt_trust/ui/screens/main/redesign_home/redesign_bloc/bloc.dart';
 import 'package:fl_egypt_trust/ui/screens/main/redesign_home/redesign_bloc/events.dart';
 import 'package:fl_egypt_trust/ui/screens/widgets/connection_error%20widget.dart';

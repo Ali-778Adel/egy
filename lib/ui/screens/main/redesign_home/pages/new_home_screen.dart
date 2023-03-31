@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fl_egypt_trust/models/utils/themes/app_slider_images.dart';
 import 'package:fl_egypt_trust/ui/screens/main/payment/screens/follow_order_screen.dart';
 import 'package:fl_egypt_trust/ui/screens/main/payment/screens/payment_first_form_screen.dart';
+import 'package:fl_egypt_trust/ui/screens/sd_screens/pages/configs_screen.dart';
 import 'package:fl_egypt_trust/ui/screens/widgets/toast_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

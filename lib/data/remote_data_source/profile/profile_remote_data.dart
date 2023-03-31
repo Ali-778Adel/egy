@@ -1,3 +1,5 @@
+import 'package:fl_egypt_trust/models/entities/theme_enities/locale_entity.dart';
+
 import '../../../models/entities/home_entities/home_translator_entity.dart';
 import '../../local_data_source/profile/profile_local_data.dart';
 import '../../services/dio/dio_client.dart';
@@ -6,6 +8,7 @@ import '../../services/dio/list_api.dart';
 abstract class ProfileRemoteData{
   Future<List<PublicTranslatorEntity>>getProfileTranslators();
   Future<List<PublicTranslatorEntity>>getProfileViewUpdates();
+  Future<List<LocalEntity>>checkLocaleValidation();
 }
 
 class ProfileRemoteDataImpl implements ProfileRemoteData{
@@ -31,6 +34,14 @@ class ProfileRemoteDataImpl implements ProfileRemoteData{
     final List objects=response.data;
     final objectsToModel=objects.map<PublicTranslatorEntity>((e) =>PublicTranslatorEntity.fromJson(json: e)).toList();
     return objectsToModel;
+  }
+
+  @override
+  Future<List<LocalEntity>> checkLocaleValidation()async {
+    final response=await dioClientService.getRequest(ListApi.checkLang);
+    final List objects=response.data;
+    final objectsToModels=objects.map((e) => LocalEntity.fromJson(json: e)).toList();
+    return objectsToModels;
   }
 
 }

@@ -1,6 +1,7 @@
 import '../../../data/local_data_source/profile/profile_local_data.dart';
 import '../../../data/remote_data_source/profile/profile_remote_data.dart';
 import '../../../models/entities/home_entities/home_translator_entity.dart';
+import '../../../models/entities/theme_enities/locale_entity.dart';
 
 class ProfileNetworkRepo{
   final ProfileRemoteData profileRemoteData;
@@ -25,6 +26,10 @@ class ProfileNetworkRepo{
       return getHomeTranslators();
     }
 
+  }
+
+  Future<List<LocalEntity>>checkLanValidation()async{
+    return await profileRemoteData.checkLocaleValidation();
   }
 
 }

@@ -9,7 +9,7 @@ void* lib;
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jclass clazz, jstring jpath) {
+Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jclass clazz, jstring jpath,jstring jpinCode,jstring jsignature) {
     string returnmsg="";
 
     lib = dlopen("libeSealSD.so", RTLD_LAZY);
@@ -57,7 +57,16 @@ Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jcla
         jstring modelstr = env->NewStringUTF( string( model, 16).c_str());
         jstring manufacturerIDstr = env->NewStringUTF( string( manufacturerID, 32).c_str());
 
-        int login = loginFirstSlot("11112222","oynrqImfTCo3x4lC6mWDdcTAxbErnMUMs/2O21i/63Z3TXZiqPVRjNwM6YVy1IzK7VgQGKqe9Nwe72SISwwIz4Ct0r3SgHO25SX/Vhoqc+4r62rvjKDVMWqlh8YHOqVpusTyzapTNRo6Xvyfa3QyeBDfjnwPiA9MiLfJE6lh1cQe7zE9PEdnSTGF3wIeU92N8lKRlAdTwxZ7uZGZuUqzzSnbKFsSRuyu21jA6yNMe7VdDm5B7nEwmfQ/8iD+syzqOsSDWGXRaGavqwMPmkO+4EA/hGAPrhUbyknNWzfxilM3yuWih3GSzFy83SBqTfhYq2xY9T4nIhskQMv4IOEQKQ==");
+        const char *nativePinCode = env->GetStringUTFChars(jpinCode, 0);
+        std::string pinCode(nativePinCode);
+        env->ReleaseStringUTFChars(jpinCode, nativePinCode);
+
+        const char *naitveSignature = env->GetStringUTFChars(jsignature, 0);
+        std::string signature(naitveSignature);
+        env->ReleaseStringUTFChars(jsignature, naitveSignature);
+
+
+        int login = loginFirstSlot(pinCode,signature);
         /*
          * 1 pin ok, lic ok
          * 0 pin error, lic ok

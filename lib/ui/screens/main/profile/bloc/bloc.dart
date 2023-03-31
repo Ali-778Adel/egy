@@ -22,7 +22,6 @@ class ProfileTransBloc extends Bloc<ProfileTransEvent,ProfileTransStates>{
        profileViewResponseStatus: ProfileViewResponseStatus.error
        ));
      }
-
      }
    });
   }

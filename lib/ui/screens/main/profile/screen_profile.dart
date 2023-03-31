@@ -15,13 +15,18 @@ import 'package:fl_egypt_trust/ui/screens/main/profile/subs/login/screen_login.d
 import 'package:fl_egypt_trust/ui/screens/main/profile/subs/password/screen_change_password.dart';
 import 'package:fl_egypt_trust/ui/screens/widgets/active_token_view.dart';
 import 'package:fl_egypt_trust/ui/screens/widgets/bottom_message_confirmation.dart';
+import 'package:fl_egypt_trust/ui/screens/widgets/toast_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../di/dependency_injection.dart';
 import '../../../../main_directional_widget.dart';
+import '../../../../models/entities/theme_enities/locale_entity.dart';
 import '../../../../models/utils/themes/app_icons.dart';
+import '../../../../repository/networks/profile_repo/profile_network_repo.dart';
 import '../../widgets/connection_error widget.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../branches/screens/branches_screen.dart';
@@ -143,28 +148,158 @@ class _StateScreenProfile extends State<ScreenProfile> {
                                   _buildSection(
                                     label:getTrans(snapshot: snapshot, txtKey: 'settingsTxt'),
                                     children: [
-                                      _buildAction(
-                                          icon: AppIcons.changeLangIcon,
-                                          title: getTrans(snapshot: snapshot, txtKey: 'changeLangTxt'),
-                                          hint:getTrans(snapshot: snapshot, txtKey: 'changeLangArTxt'),
-                                          onTap: ()async{
-                                            if(await sl<NetworkInfo>().isConnected){
-                                              EnumNetworkLangs lang = await sl<AppPreference>().getNetworkLocale();
-                                              EnumNetworkLangs newLng = (lang == EnumNetworkLangs.arabic ? EnumNetworkLangs.english : EnumNetworkLangs.arabic);
-                                              await sl<AppPreference>().setNetworkLocale(newLng);
-                                              Navigator.pushAndRemoveUntil(
-                                                  context,
-                                                  MaterialPageRoute(builder: (context)=>MainDirectionalWidget()),
-                                                      (route) => false);
+                                      FutureBuilder(
+                                          future: sl<ProfileNetworkRepo>().checkLanValidation(),
+                                          builder: (context,AsyncSnapshot <List<LocalEntity>>snap){
 
-                                            }else{
+                                            return  _buildAction(
+                                                icon: AppIcons.changeLangIcon,
+                                                title: getTrans(snapshot: snapshot, txtKey: 'changeLangTxt'),
+                                                hint:getTrans(snapshot: snapshot, txtKey: 'changeLangArTxt'),
+                                                onTap: ()async{
+                                                  if(snap.connectionState==ConnectionState.waiting){
+                                                    showCupertinoModalPopup(
+                                                        context: context, builder: (context){
+                                                      return Center(
+                                                        child: Container(
+                                                          height: 160.sp,
+                                                          width: 60.w,
+                                                          decoration:  BoxDecoration(
+                                                        borderRadius: BorderRadius.all(Radius.circular(10.sp)),
+                                                        color: Palette.white,
+                                                        boxShadow: [
+                                                        BoxShadow(color: Palette.textHint,blurRadius: 4,spreadRadius: 5)
+                                                        ]
+                                                        ),
+                                                          child:const Center(
+                                                           child: CircularProgressIndicator(),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                      );
+                                                  }
+                                                  else if(snap.hasError){
+                                                    showCupertinoModalPopup(context: context, builder: (context){
+                                                      return Center(
+                                                        child: Container(
+                                                            height: 160.sp,
+                                                            width: 60.w,
+                                                            decoration:  BoxDecoration(
+                                                                borderRadius: BorderRadius.all(Radius.circular(10.sp)),
+                                                                color: Palette.white,
+                                                                boxShadow: [
+                                                                  BoxShadow(color: Palette.textHint,blurRadius: 4,spreadRadius: 5)
+                                                                ]
+                                                            ),
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Center(child: Text(snap.error.toString(),style: Theme.of(context).textTheme.bodyMedium,),),
+                                                                const Spacer(),
+                                                                Center(
+                                                                  child: Container(
+                                                                    // height: 40.sp,
+                                                                    width: 40.w
+                                                                    ,child: TextButton(onPressed: (){
+                                                                      Navigator.of(context).pop();
+                                                                    },
+                                                                        style: ButtonStyle(
 
-                                            }
-                                            context.read<PrefSettingsModelCubit>().toggleLocale();
+                                                                            backgroundColor:
+                                                                            MaterialStateProperty.all<Color>(
+                                                                                Palette.mainGreen),
+                                                                            foregroundColor:
+                                                                            MaterialStateProperty.all<Color>(
+                                                                                Colors.white),
+                                                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                                RoundedRectangleBorder(
+                                                                                    borderRadius:
+                                                                                    BorderRadius.circular(35.0),
+                                                                                    side:
+                                                                                    BorderSide(color: Palette.mainGreen)))),
+                                                                        child: Center(child: Text("الغاء",style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.white,fontWeight: FontWeight.w600),),)),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            )
+                                                        ),
+                                                      );
+                                                    });
+                                                  }
+                                                  else{
+                                                    if(snap.data![0].val=='1'){
+                                                      showCupertinoModalPopup(
+                                                          context: context, builder: (context){
+                                                        return Center(
+                                                          child: SizedBox(
+                                                            height: 160.sp,
+                                                            width: 80.w,
+                                                            child: Container(
+                                                              padding: EdgeInsets.all(32.sp),
+                                                                decoration:  BoxDecoration(
+                                                                    borderRadius: BorderRadius.all(Radius.circular(10.sp)),
+                                                                    color: Palette.white,
+                                                                    boxShadow: [
+                                                                      BoxShadow(color: Palette.textHint,blurRadius: 4,spreadRadius: 5)
+                                                                    ]
+                                                                ),
+                                                                child: Column(
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    Center(child: Text('اللغة المتاحة حاليا هي اللغة العربية فقط .',style: Theme.of(context).textTheme.bodyMedium,),),
+                                                                    const Spacer(),
+                                                                    Container(
+                                                                      width: 60.w,
+                                                                      // height: 40.sp,
+                                                                      padding: EdgeInsets.symmetric(vertical: 16.sp),
+                                                                      child: TextButton(onPressed: (){
+                                                                        Navigator.of(context).pop();
+                                                                      },
+                                                                          style: ButtonStyle(
+                                                                              backgroundColor:
+                                                                              MaterialStateProperty.all<Color>(
+                                                                                  Palette.mainGreen),
+                                                                              foregroundColor:
+                                                                              MaterialStateProperty.all<Color>(
+                                                                                  Colors.white),
+                                                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                                  RoundedRectangleBorder(
+                                                                                      borderRadius:
+                                                                                      BorderRadius.circular(35.0),
+                                                                                      side:
+                                                                                      BorderSide(color: Palette.mainGreen)))),
+                                                                          child: Text("الغاء",style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.white,fontWeight: FontWeight.w600),)),
+                                                                    )
+                                                                  ],
+                                                                )
+                                                            ),
+                                                          ),
+                                                        );
+                                                      });
+                                                    }else{
+                                                      EnumNetworkLangs lang = await sl<AppPreference>().getNetworkLocale();
+                                                      EnumNetworkLangs newLng = (lang == EnumNetworkLangs.arabic ? EnumNetworkLangs.english : EnumNetworkLangs.arabic);
+                                                      await sl<AppPreference>().setNetworkLocale(newLng);
+                                                      Navigator.pushAndRemoveUntil(
+                                                          context,
+                                                          MaterialPageRoute(builder: (context)=>MainDirectionalWidget()),
+                                                              (route) => false);
+                                                      context.read<PrefSettingsModelCubit>().toggleLocale();
+                                                    }
+                                                  }
+                                                  if(!await sl<NetworkInfo>().isConnected){
+                                                    showToastWidget(CustomToastWidget(toastStatus: ToastStatus.warning,toastContent: "انت غير متصل بالانتر نت لا يمكنك تغيير اللغة ",),position: ToastPosition.center);
 
-                                            // Phoenix.rebirth(context);
-                                          }
-                                      ),
+                                                  }
+
+                                                  // Phoenix.rebirth(context);
+                                                }
+                                            );
+
+                                          }),
 
 
 
