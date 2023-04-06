@@ -33,27 +33,27 @@ class ThemeBloc extends Bloc<GetThemeEvent,ThemeStates>{
       print('app Local is $appLocal');
       emit(ThemeStates.copyWith(themeResponseStatus: ThemeResponseStatus.loading,message: 'loading ...'));
        try{
-         if(await sl<NetworkInfo>().isConnected){
-           List<LocalEntity>updates=await themeNetworkRepo.checkAppUpdates();
-           if(updates.first.val=="0"){
-             appIcons = await themeNetworkRepo.getAppIcons();
-             appSliderImages=await themeNetworkRepo.getAppSliderImages();
-             colorsPalette=await themeNetworkRepo.getAppColors();
-             appGeneralTrans=await themeNetworkRepo.getGeneralTrans(viewId: 14);
-           }else{
-             isThereUpdate=true;
-             appIcons=await sl<ThemeRemoteData>().getIcons();
-             appSliderImages=await sl<ThemeRemoteData>().getAppSliderImages();
-             colorsPalette=await sl<ThemeRemoteData>().getColors();
-             appGeneralTrans=await sl<ThemeRemoteData>().getGeneralRemoteUpdatedTrans(viewId: 14);
-           }
-         }else{
-           appIcons = await themeNetworkRepo.getAppIcons();
-           appSliderImages=await themeNetworkRepo.getAppSliderImages();
-           colorsPalette=await themeNetworkRepo.getAppColors();
-           appGeneralTrans=await themeNetworkRepo.getGeneralUpdatedTrans(viewId: 14);
-         }
-
+         // if(await sl<NetworkInfo>().isConnected){
+         //   // List<LocalEntity>updates=await themeNetworkRepo.checkAppUpdates();
+         //   // if(updates.first.val=="0"){
+         //   //   appIcons = await themeNetworkRepo.getAppIcons();
+         //   //   appSliderImages=await themeNetworkRepo.getAppSliderImages();
+         //   //   colorsPalette=await themeNetworkRepo.getAppColors();
+         //   //   appGeneralTrans=await themeNetworkRepo.getGeneralTrans(viewId: 14);
+         //   // }else{
+         //   //   isThereUpdate=true;
+         //   //   appIcons=await sl<ThemeRemoteData>().getIcons();
+         //   //   appSliderImages=await sl<ThemeRemoteData>().getAppSliderImages();
+         //   //   colorsPalette=await sl<ThemeRemoteData>().getColors();
+         //   //   appGeneralTrans=await sl<ThemeRemoteData>().getGeneralRemoteUpdatedTrans(viewId: 14);
+         //   // }
+         // }else{
+         //
+         // }
+         appIcons = await themeNetworkRepo.getAppIcons();
+         appSliderImages=await themeNetworkRepo.getAppSliderImages();
+         colorsPalette=await themeNetworkRepo.getAppColors();
+         appGeneralTrans=await themeNetworkRepo.getGeneralTrans(viewId: 14);
          emit(ThemeStates.copyWith(
            themeResponseStatus: ThemeResponseStatus.success,
            iconsEntity: appIcons,
@@ -63,6 +63,21 @@ class ThemeBloc extends Bloc<GetThemeEvent,ThemeStates>{
            // appLocal: appLocal,
            message: 'success'
          ));
+         appIcons = await themeNetworkRepo.getUpdatedAppIcons();
+         appSliderImages=await themeNetworkRepo.getUpdatedAppSliderImages();
+         colorsPalette=await themeNetworkRepo.getUpdatedAppColors();
+         appGeneralTrans=await themeNetworkRepo.getGeneralUpdatedTrans(viewId: 14);
+         emit(ThemeStates.copyWith(
+             themeResponseStatus: ThemeResponseStatus.success,
+             iconsEntity: appIcons,
+             colorsEntity: colorsPalette,
+             generalTranslatorsEntity: appGeneralTrans,
+             appSliderImages: appSliderImages,
+             // appLocal: appLocal,
+             message: 'success'
+         ));
+
+
 
        }catch(e){
          emit(ThemeStates.copyWith(

@@ -22,14 +22,38 @@ class ThemeNetworkRepo{
     }
   }
 
+
+  Future<List<IconsEntity>>getUpdatedAppIcons()async{
+    try{
+      final response=await themeRemoteData.getIcons();
+      return response;
+    }catch(e){
+      final response=await themeLocalData.getLocalIcons();
+      return response.fold((l)async =>await themeRemoteData.getIcons(receiveTimeOutInMillisecond: 15000) , (r) => r);
+      throw(Exception);
+    }
+  }
+
   Future<List<IconsEntity>>getAppSliderImages()async{
     try{
       final response=await themeLocalData.getLocalSliderImages();
       return response.fold((l)async =>await themeRemoteData.getAppSliderImages(receiveTimeOutInMillisecond: 15000) , (r) => r);
-      // final nets=await themeRemoteData.getAppSliderImages(receiveTimeOutInMillisecond: 5000);
-      // return nets;
+      final nets=await themeRemoteData.getAppSliderImages(receiveTimeOutInMillisecond: 5000);
+      return nets;
     }catch(e){
       throw(Exception);
+    }
+  }
+
+  Future<List<IconsEntity>>getUpdatedAppSliderImages()async{
+    try{
+            final nets=await themeRemoteData.getAppSliderImages(receiveTimeOutInMillisecond: 5000);
+            return nets;
+    }catch(e){
+      final response=await themeLocalData.getLocalSliderImages();
+      return response.fold((l)async =>await themeRemoteData.getAppSliderImages(receiveTimeOutInMillisecond: 15000) , (r) => r);
+
+
     }
   }
 
@@ -42,6 +66,17 @@ class ThemeNetworkRepo{
     }catch(e){
       throw(Exception);
 
+    }
+
+  }
+
+  Future<List<ColorsEntity>>getUpdatedAppColors()async{
+    try{
+            final net=await themeRemoteData.getColors(receiveTimeOutInMillisecond: 5000);
+      return net;
+    }catch(e){
+      final response=await themeLocalData.getLocalColors();
+      return response.fold((l)async => await themeRemoteData.getColors(receiveTimeOutInMillisecond: 15000), (r) => r);
     }
 
   }

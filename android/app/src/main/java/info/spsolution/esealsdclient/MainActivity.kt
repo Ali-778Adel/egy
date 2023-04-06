@@ -2,14 +2,15 @@ package info.spsolution.esealsdclient
 
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Bundle
+import android.os.Build
 import android.os.CountDownTimer
-import android.widget.TextView
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import com.tekartik.sqflite.Constant.TAG
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -19,12 +20,13 @@ import java.io.File
 import java.io.IOException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import java.util.ArrayList
+import java.util.*
+import java.util.concurrent.CountDownLatch
+import android.util.Base64
 
 data class ConfigData(
     val signature: String,
     val pinCode: String,
-
 )
 
 
@@ -33,10 +35,20 @@ class MainActivity : FlutterFragmentActivity() {
 
     private val CHANNEL = "com.example.native_method_channel"
     private val CHANNEL1 = "configs_channel"
+    val latch=CountDownLatch(1)
+
 
     var sig:String="";
     var pin:String="";
 
+    var callBackResponse:String=""
+    var certificateSignature:String=""
+    var startDate:String=""
+    var endDate:String=""
+    var serialNum:String=""
+    var userData:String=""
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override
     fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
@@ -48,8 +60,16 @@ class MainActivity : FlutterFragmentActivity() {
                     sig=signature
                     pin=pinCode
                 }
-                val greetings  = onCreate1()
-                result.success(greetings)
+                    val map = mutableMapOf<String, Any>()
+                    map["key1"] = initializeESealSD()
+                    map["key2"] = serialNum
+                    map["key3"] = startDate
+                    map["key4"] = endDate
+                    map["key5"] = certificateSignature
+                    map["key6"] ="CN=ناشد ذكرى قزمان, EMAILADDRESS=28701028800073@egypttrust.com, O=ناشد ذكرى قزمان, OU=National ID - 28701028800073, OID.2.5.4.97=VATEG-627824935, C=EG"
+                        userData
+
+                result.success(map)
             }
         }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger,CHANNEL1).setMethodCallHandler{
@@ -65,7 +85,6 @@ class MainActivity : FlutterFragmentActivity() {
                 println("signature is ${signature}")
                 println("signature is ${pinCode}")
 
-                HelloFromJNI("sdfjshfgfd",pin,sig)
                 result.success("i recieved method ");
             }
         }
@@ -84,56 +103,54 @@ class MainActivity : FlutterFragmentActivity() {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
 
-    @SuppressLint("SetTextI18n")
-    fun  onCreate1(): String {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun initializeESealSD(): String {
+        var message = "This test takes a long time, do not rotate."
+
+        // Load the native library
         try {
             System.loadLibrary("esealsdclient")
-            println("i init it_____________________")
+            Log.d(TAG, "esealsdclient library loaded successfully")
         } catch (e: UnsatisfiedLinkError) {
-            println("ther is exception")
-
-            println(e)
-        } finally {
-//            HelloFromJNI("sdfjshfgfd",pin,sig)
-            println("i will tested successfully")
+            Log.e(TAG, "Failed to load esealsdclient library", e)
+            return "Failed to load esealsdclient library: ${e.message}"
         }
 
+        // Verify storage permissions
+         (verifyStoragePermissions(this))
 
 
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
-//
-        var tv:String="";
-        tv= "This test takes a long time, do not rotate.";
+        // Get the application's data directory on external storage
+        val packageName = applicationContext.packageName
+        val appPath = "/Android/data/$packageName"
+        val sdCards = getRosettaSdCardDataPaths(this, appPath)
 
-        verifyStoragePermissions(this);
-
-        val thePackage = this.applicationContext.packageName
-        val appPath = "/Android/data/${thePackage.toString()}"
-
-        val sdcards = getRosettaSdCardDataPaths(this, appPath)
-
-        if (sdcards.isEmpty()) {
-            tv = "SPYRUS Rosetta SD not found!";
-            println(tv)
-            return tv;
+        if (sdCards.isEmpty()) {
+            return "SPYRUS Rosetta SD not found!"
         }
 
-        checkRosettaSmartIO(sdcards[0], appPath)
-
-        MountInfo.pathtouse = sdcards[0]
-
-        tv = "Please wait";
-
-
-       var v= TestESealSD( MountInfo.pathtouse+appPath);
-        if(v.isNotEmpty()){
-            tv=v
-            return  tv
+        // Check Rosetta SmartIO
+        val rosettaSmartIOPath = sdCards[0] + appPath
+        if (!checkRosettaSmartIO(sdCards[0], appPath)) {
+            return "Failed to check Rosetta SmartIO"
         }
 
-        return tv;
+        // Set the path to use for MountInfo
+        MountInfo.pathtouse = sdCards[0]
+
+        // Test the ESeal SD card
+         TestESealSD(rosettaSmartIOPath){result->
+             if(result.isNotEmpty()){
+                 Log.d(TAG, "$result")
+                 message=result
+             }
+             latch.countDown()
+         }
+        latch.await()
+        return message
     }
+
+
 
     private fun checkRosettaSmartIO(path: String?, appPath: String?): Boolean {
 
@@ -172,6 +189,8 @@ class MainActivity : FlutterFragmentActivity() {
 
         }
     }
+
+
 
     private fun getRosettaSdCardDataPaths(context: Context, appPath: String): Array<String> {
 
@@ -241,8 +260,9 @@ class MainActivity : FlutterFragmentActivity() {
         return result.toTypedArray()
     }
 
-    private fun TestESealSD( sdcardpath: String): String {
-        var tv:String=""
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun TestESealSD(sdcardpath: String, callback: (String) -> Unit) {
         Thread(Runnable {
             val tokenInfo = HelloFromJNI(sdcardpath,pin,sig);
             if(tokenInfo is TokenInfo) {
@@ -256,20 +276,40 @@ class MainActivity : FlutterFragmentActivity() {
                                 )
                             ) as X509Certificate
                     FinalizeFromJNI();
-                     tv = "Init\nLogin OK \n" + certificate.subjectDN.name
+//                    val encoder= Base64.getEncoder()
+//                    val cert=encoder.encodeToString(certificate.encoded)
+                    val signatureString = Base64.encodeToString(certificate.signature, Base64.DEFAULT)
+                    println("Signature string: $signatureString")
+                    certificateSignature=signatureString
+                    startDate=certificate.notAfter.toString()
+                    endDate=certificate.notBefore.toString()
+                    serialNum=certificate.serialNumber.toString()
+                    userData= certificate.subjectDN.toString()
+
+
+
+// Assuming 'certificate' is your X509Certificate instance
+
+
+                    println("end date ${certificate.notAfter}")
+                    println("start date is ${certificate.notBefore}")
+                    println("serialNumber is ${certificate.serialNumber}")
+                    println("user data is ${certificate.subjectDN}")  //username == EmailAddress ==  National ID === VATEG we need extrac data here
+                    //CN=ناشد ذكرى قزمان, EMAILADDRESS=28701028800073@egypttrust.com, O=ناشد ذكرى قزمان, OU=National ID - 28701028800073, OID.2.5.4.97=VATEG-627824935, C=EG
+                    println("signature is !!!  ${signatureString}")
+                    callback.invoke("Init\nLogin OK \n" + certificate.subjectDN.name)
                 }
                 else {
-                    tv= "Init\nLogin OK\nNO CERT" ;
+                    callback.invoke("Init\nLogin OK\nNO CERT")
                 }
             }
-            else
-            {
-                 tv= tokenInfo.toString()
-
+            else {
+                callback.invoke(tokenInfo.toString())
             }
-        }).start();
-        return tv
+        }).start()
     }
+
+
     companion object {
       init {
          System.loadLibrary("esealsdclient")
@@ -288,3 +328,9 @@ class MyCountDownTimer(startTime: Long, interval: Long) :
 
 external fun HelloFromJNI(path: String,piCode:String,signature :String): Object
 external fun FinalizeFromJNI(): Boolean
+
+
+
+
+
+

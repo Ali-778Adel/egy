@@ -114,6 +114,7 @@ Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jcla
                                    manufacturerIDstr,
                                    init,
                                    pininit);
+
         }
         else
             returnmsg +="\n Login Failed " + to_string(login);

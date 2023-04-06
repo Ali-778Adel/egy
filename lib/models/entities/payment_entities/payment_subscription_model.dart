@@ -12,7 +12,7 @@ class PaymentSubscriptionModel{
   @HiveField(3)
   final bool?isDiscount;
   @HiveField(4)
-  final double?discountCost;
+  final dynamic discountCost;
   @HiveField(5)
   final int?discountPercent;
 

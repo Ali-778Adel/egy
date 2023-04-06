@@ -44,6 +44,9 @@ import 'models/utils/themes/theme_dark_black.dart';
 import 'models/utils/themes/theme_light.dart';
 import 'models/utils/themes/themes_bloc/bloc.dart';
 import 'ui/screens/splash_screen.dart';
+// import 'package:flutter_native_splash/flutter_native_splash.dart';
+
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 final GlobalKey<NavigatorState> navigatorKey =
     GlobalKey<NavigatorState>(debugLabel: "Main Navigator");
@@ -63,25 +66,20 @@ String? locale;
 
 
 void main() async {
-  await initSl();
-// try{
-//   final lib = DynamicLibrary.open('libeSealSD.so');
-//   final myFunc = lib.lookupFunction<MyNativeFunc, MyNativeFuncDart>('myNativeFunc');
-//   print('Result: $myFunc');
-//
-// }catch(e){
-//   print("e is $e");
-// }
-
-  runApp(Phoenix(child: const MyApp()));
+  await initSl().then((value) {
+    runApp(Phoenix(child: const MyApp()));
+  });
 
 }
 
 Future<void> initSl() async {
+
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  WidgetsFlutterBinding.ensureInitialized();
   locale = (await AppPreference.instance.getLocale()).localeValue();
   await initDependencies().then((value) {});
+
+
 }
 
 class MyApp extends StatelessWidget {

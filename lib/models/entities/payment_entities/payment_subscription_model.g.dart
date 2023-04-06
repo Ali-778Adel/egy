@@ -22,7 +22,7 @@ class PaymentSubscriptionModelAdapter
       periodName: fields[1] as String?,
       subPeriodCost: fields[2] as int?,
       isDiscount: fields[3] as bool?,
-      discountCost: fields[4] as double?,
+      discountCost: fields[4] as dynamic,
       discountPercent: fields[5] as int?,
     );
   }

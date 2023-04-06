@@ -97,4 +97,37 @@ class AppGeneralTrans {
       getGeneralTransByKey('refNumberValidationTxt');
   static String actviateToken = getGeneralTransByKey('actviateToken');
   static String welcomeTxt = getGeneralTransByKey('welcomeTxt');
+  static String pinTxt = getGeneralTransByKey('pinTxt');
+  static String liecienceTxt = getGeneralTransByKey('liecienceTxt');
+  static String secretKeyTxtTxt = getGeneralTransByKey('secretKeyTxtTxt');
+  static String editTxt = getGeneralTransByKey('editTxt');
+  static String secretKeyTxt = getGeneralTransByKey('secretKeyTxt');
+  static String loginTxt = getGeneralTransByKey('loginTxt');
+  static String langValidationTxt = getGeneralTransByKey('langValidationTxt');
+  static String secretValidationTxt = getGeneralTransByKey('secretValidationTxt');
+  static String saveTxt = getGeneralTransByKey('saveTxt');
+  static String qrTxt = getGeneralTransByKey('qrTxt');
+  static String qrEditiTxt = getGeneralTransByKey('qrEditiTxt');
+  static String pinValidationTxt = getGeneralTransByKey('pinValidationTxt');
+  static String sdCofigTxt = getGeneralTransByKey('sdCofigTxt');
+  static String cancelTxt = getGeneralTransByKey('cancelTxt');
+  static String natioanalIdTxt1 = getGeneralTransByKey('natioanalIdTxt1');
+  static String issuanceSealTxt = getGeneralTransByKey('issuanceSealTxt');
+  static String dataEditedTxt = getGeneralTransByKey('dataEditedTxt');
+  static String companyTxt = getGeneralTransByKey('companyTxt');
+  static String serialNumTxt = getGeneralTransByKey('serialNumTxt');
+  static String certStartDateTxt = getGeneralTransByKey('certStartDateTxt');
+  static String certEndDateTxt = getGeneralTransByKey('certEndDateTxt');
+  static String showSignatureTxt = getGeneralTransByKey('showSignatureTxt');
+  static String waitTxt = getGeneralTransByKey('waitTxt');
+  static String egyTrustTxt = getGeneralTransByKey('egyTrustTxt');
+  static String client = getGeneralTransByKey('client');
+  static String natiionalIdTxt = getGeneralTransByKey('natiionalIdTxt');
+  static String VategTxt = getGeneralTransByKey('VategTxt');
+  static String emailTxt = getGeneralTransByKey('emailTxt');
+
+
+
+
+
 }

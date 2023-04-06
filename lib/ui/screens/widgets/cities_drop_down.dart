@@ -68,14 +68,14 @@ class PaymentCitiesDropDown extends StatelessWidget {
               1,
               (index) => DropdownMenuItem(
                   value: selectedCityObject,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextButton(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: TextButton(
                          child:Text('error,try again',
-                      style: Theme.of(context)
+                    style: Theme.of(context)
                           .textTheme
                           .bodyMedium!
                           .copyWith(color: Palette.colorRed,fontSize: 8.sp)),
@@ -83,8 +83,8 @@ class PaymentCitiesDropDown extends StatelessWidget {
                            BlocProvider.of<PaymentSecondFormCitiesBloc>(context).add(GetSecondFormCitiesDataEvent(stateId:stateId!));
                           },
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )));
         }
       case SecondFormResponseStatus.success:
@@ -102,5 +102,52 @@ class PaymentCitiesDropDown extends StatelessWidget {
                   value: selectedCityObject, child: Text(AppGeneralTrans.chooseStateFirst)));
         }
     }
+  }
+}
+class PaymentCitiesDropDown1 extends StatelessWidget {
+  final PaymentCitiesModel? selectedCityObject;
+  final Function(dynamic)? onChanged;
+  final String fieldHint;
+  final int?stateId;
+   PaymentCitiesDropDown1(
+      {Key? key, this.selectedCityObject, this.onChanged,required this.fieldHint,this.stateId})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildDropDownsCitiesItems();
+  }
+
+  _buildDropDownsCitiesItems() {
+    return BlocBuilder<PaymentSecondFormCitiesBloc,
+        GetSecondFormCitiesDataState>(builder: (context, state) {
+      return DropDown2(
+          value: selectedCityObject,
+          items: _buildCitiesItems(state, context),
+          hintIsVisible: true,
+          hint:fieldHint,
+          validator: (val) {
+            if (val == null) return AppGeneralTrans.cityValidationTxt;
+            return null;
+          },
+          onChanged: onChanged);
+    });
+  }
+
+  _buildCitiesItems(GetSecondFormCitiesDataState state, BuildContext context) {
+    return List<DropdownMenuItem>.generate(
+        1,
+            (index) => DropdownMenuItem(
+            value: selectedCityObject,
+            child: TextButton(
+              child:Text('error,try again',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Palette.colorRed,fontSize: 8.sp)),
+              onPressed: (){
+                BlocProvider.of<PaymentSecondFormCitiesBloc>(context).add(GetSecondFormCitiesDataEvent(stateId:stateId!));
+              },
+            )));
   }
 }

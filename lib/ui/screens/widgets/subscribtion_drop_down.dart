@@ -63,12 +63,12 @@ class PaymentSubscriptionDropDown extends StatelessWidget {
               1,
                   (index) => DropdownMenuItem(
                   value:selectedSubscriptionObject,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextButton(
+                  child:  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: TextButton(
                           child:Text('error,try again',
                             style: Theme.of(context)
                                 .textTheme
@@ -78,8 +78,8 @@ class PaymentSubscriptionDropDown extends StatelessWidget {
                             BlocProvider.of<PaymentSecondFormSubscriptionsBloc>(context).add(GetSecondFormSubscriptionsDataEvent(serviceId:serviceId!));
                           },
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )));
         }
       case SecondFormResponseStatus.success:

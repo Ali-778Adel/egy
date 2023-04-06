@@ -6,6 +6,7 @@ import 'package:fl_egypt_trust/models/bloc/settings_bloc/cubit_seetings_bloc.dar
 import 'package:fl_egypt_trust/models/utils/app_preference.dart';
 import 'package:fl_egypt_trust/models/utils/language/languages.dart';
 import 'package:fl_egypt_trust/models/utils/language/localizations_delegate.dart';
+import 'package:fl_egypt_trust/models/utils/themes/app_general_trans.dart';
 import 'package:fl_egypt_trust/models/utils/themes/colors.dart';
 import 'package:fl_egypt_trust/models/utils/themes/themes_bloc/bloc.dart';
 import 'package:fl_egypt_trust/models/utils/themes/themes_bloc/events.dart';
@@ -183,7 +184,7 @@ class _StateScreenProfile extends State<ScreenProfile> {
                                                     showCupertinoModalPopup(context: context, builder: (context){
                                                       return Center(
                                                         child: Container(
-                                                            height: 160.sp,
+                                                            // height: 160.sp,
                                                             width: 60.w,
                                                             decoration:  BoxDecoration(
                                                                 borderRadius: BorderRadius.all(Radius.circular(10.sp)),
@@ -229,12 +230,12 @@ class _StateScreenProfile extends State<ScreenProfile> {
                                                     });
                                                   }
                                                   else{
-                                                    if(snap.data![0].val=='1'){
+                                                    if(snap.data![0].val=='0'){
                                                       showCupertinoModalPopup(
                                                           context: context, builder: (context){
                                                         return Center(
                                                           child: SizedBox(
-                                                            height: 160.sp,
+                                                            height: MediaQuery.of(context).size.height*.40,
                                                             width: 80.w,
                                                             child: Container(
                                                               padding: EdgeInsets.all(32.sp),
@@ -249,7 +250,7 @@ class _StateScreenProfile extends State<ScreenProfile> {
                                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                                   children: [
-                                                                    Center(child: Text('اللغة المتاحة حاليا هي اللغة العربية فقط .',style: Theme.of(context).textTheme.bodyMedium,),),
+                                                                    Center(child: Text('${AppGeneralTrans.langValidationTxt}',style: Theme.of(context).textTheme.bodyMedium,),),
                                                                     const Spacer(),
                                                                     Container(
                                                                       width: 60.w,
@@ -271,7 +272,7 @@ class _StateScreenProfile extends State<ScreenProfile> {
                                                                                       BorderRadius.circular(35.0),
                                                                                       side:
                                                                                       BorderSide(color: Palette.mainGreen)))),
-                                                                          child: Text("الغاء",style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.white,fontWeight: FontWeight.w600),)),
+                                                                          child: Text(AppGeneralTrans.cancelTxt,style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.white,fontWeight: FontWeight.w600),)),
                                                                     )
                                                                   ],
                                                                 )

@@ -32,6 +32,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   ffi: ^2.0.1
+  flutter_native_splash: ^2.1.0
+#  qr_flutter:
+#    git:
+#      url: git://github.com/lukef/qr.flutter.git
 
 
   hive: ^2.2.3
@@ -99,6 +103,9 @@ dependencies:
   path_provider: ^2.0.14
   # use for scan qr path
   qr_code_scanner: ^1.0.1
+  qr_flutter: ^4.0.0
+  #use for naitve splash
+
 
 
 

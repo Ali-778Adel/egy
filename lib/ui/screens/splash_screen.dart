@@ -54,7 +54,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
     UserData? user = await AppPreference.instance.getUserData();
 
     if (user == null) {
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 2));
     } else {
       await context.read<AuthCubit>().checkSession();
     }

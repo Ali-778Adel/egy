@@ -85,30 +85,30 @@ class PaymentStatesDropDown extends StatelessWidget {
             return List<DropdownMenuItem>.generate(
                 1,
                 (index) => DropdownMenuItem(
-                        child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          TextButton(
-                            child: Text(
-                              'error,try again',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                      color: Palette.colorRed, fontSize: 8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                child: Text(
+                                  'error,try again',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                          color: Palette.colorRed, fontSize: 8),
+                                ),
+                                onPressed: () {
+                                  BlocProvider.of<
+                                              PaymentSecondFormSubscriptionsBloc>(
+                                          context)
+                                      .add(GetSecondFormStatesDataEvent());
+                                },
+                              ),
                             ),
-                            onPressed: () {
-                              BlocProvider.of<
-                                          PaymentSecondFormSubscriptionsBloc>(
-                                      context)
-                                  .add(GetSecondFormStatesDataEvent());
-                            },
-                          ),
-                        ],
-                      ),
-                    )));
+                          ],
+                        )));
           }
         case SecondFormResponseStatus.success:
           {

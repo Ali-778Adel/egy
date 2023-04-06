@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fl_egypt_trust/models/utils/themes/app_general_trans.dart';
 import 'package:fl_egypt_trust/models/utils/themes/app_slider_images.dart';
 import 'package:fl_egypt_trust/ui/screens/main/payment/screens/follow_order_screen.dart';
 import 'package:fl_egypt_trust/ui/screens/main/payment/screens/payment_first_form_screen.dart';
@@ -25,7 +26,7 @@ import '../../payment/screens/payment_parent_screen.dart';
 import '../redesign_bloc/bloc.dart';
 import '../redesign_bloc/events.dart';
 import '../redesign_bloc/states.dart';
-import 'buySealPage.dart';
+import '../../../sd_screens/pages/buySealPage.dart';
 import 'new_home_screen_shimmer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -250,21 +251,11 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
           imageUrl: AppIcons.sealSignatureIcon,
           onTap: ()async{
             Navigator.push(context, MaterialPageRoute(builder: (context)=>const PaymentControllerScreen()));
-            // if(await checkPaymentToken()){
-            //
-            //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const PaymentControllerScreen()));
-            // }else{
-            //   Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (context) => const PaymentFirstFormScreen()));
-            // }
-
           },
         ),
         CustomServiceItem(
           iconData: FontAwesomeIcons.moneyCheckDollar,
-          serviceName:'اصدار توقيع',
+          serviceName:AppGeneralTrans.issuanceSealTxt,
           imageUrl: AppIcons.sealSignatureIcon,
           onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context)=>const BuySealPage()));

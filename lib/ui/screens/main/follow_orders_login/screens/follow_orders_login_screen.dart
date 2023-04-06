@@ -5,23 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../../../di/dependency_injection.dart';
 import '../../../../../models/utils/app_preference.dart';
 import '../../../../../models/utils/language/localizations_delegate.dart';
 import '../../../../../models/utils/themes/app_general_trans.dart';
 import '../../../../../models/utils/themes/colors.dart';
+import '../../../widgets/custom_password_text_field.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/toast_widget.dart';
 import '../bloc/events.dart';
 import '../bloc/states.dart';
 
-class FollowOrdersLoginScreen extends StatelessWidget {
-   FollowOrdersLoginScreen({Key? key}) : super(key: key);
+class FollowOrdersLoginScreen extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+   return _FollowOrdersLoginScreen();
+  }
+
+}
+
+class _FollowOrdersLoginScreen extends State<FollowOrdersLoginScreen> {
   final nationalIdController = TextEditingController();
   final refrenceNumberController = TextEditingController();
 
    final _formKey = GlobalKey<FormState>();
+
+   bool obSecureText=true;
 
 
    String? checkVal({String? val, bool? condition, String? errorMessage}) {
@@ -62,29 +71,34 @@ class FollowOrdersLoginScreen extends StatelessWidget {
                         maxLength: 14,
                         textEditingController: nationalIdController,
                         textFieldTypes: TextFieldTypes.email,
-                        // labelHint:'الرقم القومي',
+                        labelHint:AppGeneralTrans.nationalIdTitleTxt,
                         fieldHint:
                         ' ${AppGeneralTrans.enterTxt}'
-                            'ادخل الرقم القومي',
+                            '${AppGeneralTrans.natioanalIdTxt1}',
                         validator: (val) {
                           return checkVal(
                               val: val,
                               condition: val!.length!=14,
-                              errorMessage: AppGeneralTrans.nationalIdValidationTxt);
+                              errorMessage: AppGeneralTrans.natioanalIdTxt1);
                         }),
                     SizedBox(height: 4.sp,),
-                    CustomTextField(
+                    CustomPasswordTextField(
                         textEditingController: refrenceNumberController,
-                        textFieldTypes: TextFieldTypes.email,
-                        // labelHint:'الرقم المرجعي',
+                        textFieldTypes: TextFieldTypes.number,
+                        obsecureText: obSecureText,
+                        onIconTapped: (){
+                          setState(() {
+                            obSecureText=!obSecureText;
+                          });
+                        },
+                        labelHint:AppGeneralTrans.secretKeyTxtTxt,
                         fieldHint:
-                        ' ${AppGeneralTrans.enterTxt}'
-                            'ادخل الرقم المرجعي',
+                            '${AppGeneralTrans.enterTxt } ${AppGeneralTrans.secretKeyTxtTxt}',
                         validator: (val) {
                           return checkVal(
                               val: val,
                               condition: val!.isEmpty,
-                              errorMessage: 'يجب ادخال الرقم المرجعي ');
+                              errorMessage: AppGeneralTrans.secretKeyTxtTxt);
                         }),
 
 
