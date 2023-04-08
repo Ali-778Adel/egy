@@ -101,7 +101,7 @@ Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jcla
                                        init,
                                        pininit);
                 bool pk =acquireSessionPrivKey();
-                string sign = signCades("HelloSign");
+                string sign = signCades("hello");
 
                 return tokeninfo;
             }

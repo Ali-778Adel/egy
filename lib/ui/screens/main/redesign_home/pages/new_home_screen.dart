@@ -20,8 +20,11 @@ import '../../../../../repository/common_function/url_launcher.dart';
 import '../../../widgets/connection_error widget.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/service_item.dart';
+import '../../follow_orders_login/screens/follow_orders_login_screen.dart';
 import '../../home/subs/certifications/screen_certification.dart';
 import '../../home/subs/certifications/screen_order_inquiry.dart';
+import '../../payment/bloc/follow_order_bloc/bloc.dart';
+import '../../payment/bloc/follow_order_bloc/events.dart';
 import '../../payment/screens/payment_parent_screen.dart';
 import '../redesign_bloc/bloc.dart';
 import '../redesign_bloc/events.dart';
@@ -211,46 +214,46 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
           ),
         ),
         CustomServiceItem(
-          iconData: FontAwesomeIcons.fileContract,
-          serviceName:getTrans(state: state, txtKey: 'servicesItem1Txt'),
-          imageUrl:AppIcons.issuanceCertificationIcon,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ScreenCertification(),
-                settings: RouteSettings(
-                  arguments: HomeScreenArgs(
-                    issauanceCiretificationTxt:getTrans(state: state, txtKey: 'servicesItem1Txt')
-                  )
-                )
-              ),
-            );
-          },
-        ),
-        CustomServiceItem(
           iconData: FontAwesomeIcons.searchengin,
-          serviceName:getTrans(state: state, txtKey: 'servicesItem2Txt'),
-          imageUrl: AppIcons.ordersQueryIcon,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ScreenOrderInquiry()
-             ,     settings: RouteSettings(
-              arguments: HomeScreenArgs(
-              ordersQueryTxt:getTrans(state: state, txtKey: 'servicesItem2Txt'),
-            )
-            )
-              ),
-            );
-          },
+          serviceName:AppGeneralTrans.followOrderTxt,
+          imageUrl:AppIcons.issuanceCertificationIcon,
+            onTap: ()async{
+              if(await checkPaymentToken()){
+                BlocProvider.of<FollowOrderBloc>(context).add(FollowOrderEvent());
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const FollowOrderScreen()));
+              }else{
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>  FollowOrdersLoginScreen()));
+              }
+
+            },
         ),
+        // CustomServiceItem(
+        //   iconData: FontAwesomeIcons.searchengin,
+        //   serviceName:getTrans(state: state, txtKey: 'servicesItem2Txt'),
+        //   imageUrl: AppIcons.ordersQueryIcon,
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => const ScreenOrderInquiry()
+        //      ,     settings: RouteSettings(
+        //       arguments: HomeScreenArgs(
+        //       ordersQueryTxt:getTrans(state: state, txtKey: 'servicesItem2Txt'),
+        //     )
+        //     )
+        //       ),
+        //     );
+        //   },
+        // ),
         CustomServiceItem(
           iconData: FontAwesomeIcons.moneyCheckDollar,
           serviceName:getTrans(state: state, txtKey: 'servicesItem3Txt'),
           imageUrl: AppIcons.sealSignatureIcon,
           onTap: ()async{
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>const PaymentControllerScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const PaymentFirstFormScreen()));
           },
         ),
         CustomServiceItem(
