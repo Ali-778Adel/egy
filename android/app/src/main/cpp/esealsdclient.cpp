@@ -36,6 +36,7 @@ Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jcla
 
     string test = testFunc("hello from the other side");
 
+
     bool  init = initPKCS(path);
     if(init) {
         returnmsg +="init OK";
@@ -101,7 +102,12 @@ Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jcla
                                        init,
                                        pininit);
                 bool pk =acquireSessionPrivKey();
-                string sign = signCades("hello");
+                if(pk){
+                    string sign = signCades("hello");
+                }else{
+                    returnmsg +="\n pk is false " + to_string(login);
+                }
+
 
                 return tokeninfo;
             }

@@ -67,7 +67,7 @@ class MainActivity : FlutterFragmentActivity() {
                     map["key4"] = endDate
                     map["key5"] = certificateSignature
                     map["key6"] ="CN=ناشد ذكرى قزمان, EMAILADDRESS=28701028800073@egypttrust.com, O=ناشد ذكرى قزمان, OU=National ID - 28701028800073, OID.2.5.4.97=VATEG-627824935, C=EG"
-                        userData
+//                        userData
 
                 result.success(map)
             }
@@ -105,6 +105,7 @@ class MainActivity : FlutterFragmentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initializeESealSD(): String {
+        HelloFromJNI("sdcardpath",pin,sig);
         var message = "This test takes a long time, do not rotate."
 
         // Load the native library

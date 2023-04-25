@@ -74,6 +74,8 @@ void registerBlocs() {
   sl.registerFactory<PaymentSecondFormSubscriptionsBloc>(() => PaymentSecondFormSubscriptionsBloc( paymentNetworkRepo: sl()));
   sl.registerFactory<PaymentRegistrationBloc>(() => PaymentRegistrationBloc( paymentNetworkRepo: sl()));
   sl.registerFactory<HomeViewBloc>(() => HomeViewBloc( homeNetworkRepo: sl()));
+
+  /// lazy
   sl.registerLazySingleton<ThemeBloc>(() => ThemeBloc(themeNetworkRepo: sl()));
   sl.registerFactory<PaymentThirdFormBloc>(() => PaymentThirdFormBloc( paymentNetwrokRepo: sl()));
   sl.registerFactory<PaymentFourthScreensTransBloc>(() => PaymentFourthScreensTransBloc( paymentNetworkRepo: sl()));
