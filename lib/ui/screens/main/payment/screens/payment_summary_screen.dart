@@ -36,7 +36,6 @@ class _PaymentSummaryScreen extends State<PaymentSummaryScreen> {
   @override
   void initState() {
     super.initState();
-
     BlocProvider.of<PaymentFourthScreensTransBloc>(context).add(GetFourthFormTransDataEvent());
   }
 
@@ -292,7 +291,7 @@ class _PaymentSummaryScreen extends State<PaymentSummaryScreen> {
       total: paymentSecondScreenArgs.total,
       commisionerCardId: paymentSecondScreenArgs.authorizedNationalId,
       commissionerName: paymentSecondScreenArgs.authorizedName,
-      commissionerPhone: paymentSecondScreenArgs.authorizedPhoneNumber,
+      commissionerPhone:"${paymentSecondScreenArgs.authorizedSelectedServiceProvider}""${paymentSecondScreenArgs.authorizedPhoneNumber}",
       subscriptionId: paymentSecondScreenArgs.subscriptionId,
       isCommissioner: paymentSecondScreenArgs.authorized!?'True':'False',
       isThereDiscount: paymentSecondScreenArgs.discountNotification!?'True':'False',
@@ -302,7 +301,7 @@ class _PaymentSummaryScreen extends State<PaymentSummaryScreen> {
       issuanceTaxDate: paymentSecondScreenArgs.docStartDate,
       taxCardDate: paymentSecondScreenArgs.docEndDate,
       liberalProfessions: paymentSecondScreenArgs.freeMissions,
-      mobileNumber: paymentSecondScreenArgs.phoneNumber,
+      mobileNumber:"${paymentSecondScreenArgs.selectedServiceProvider}""${paymentSecondScreenArgs.phoneNumber}",
       pdfPath:paymentThirdScreenModel!.pdfPath!,
       taxCardPath: paymentThirdScreenModel!.taxCardPath!,
       valueAddedCardPath: paymentThirdScreenModel!.valueAddedCardPath!,

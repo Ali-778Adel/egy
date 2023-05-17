@@ -14,6 +14,8 @@ import 'configs_screen.dart';
 import 'edit_configs_screen.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'extract_signature_page.dart';
+
 
 class BuySealPage extends StatefulWidget {
   const BuySealPage({Key? key}) : super(key: key);
@@ -24,6 +26,8 @@ class BuySealPage extends StatefulWidget {
 
 class _BuySealPageState extends State<BuySealPage> {
   bool isCofigs=false;
+   String signature="";
+   String pinCode="";
 
   String input = '';
   Map<String, String> result = {};
@@ -35,7 +39,9 @@ class _BuySealPageState extends State<BuySealPage> {
       if(value.signatureCode==null){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const SDConfigsScreen()));
       }else{
-        call(signature: value.signatureCode??'',pinCode: value.pinCode??'');
+        signature=value.signatureCode!;
+        pinCode=value.pinCode!;
+        // call(signature: value.signatureCode??'',pinCode: value.pinCode??'');
       }
 
     });
@@ -66,7 +72,7 @@ class _BuySealPageState extends State<BuySealPage> {
 
   Future<void> call({required String signature,required String pinCode}) async {
     const channel = MethodChannel('com.example.native_method_channel');
-    await channel.invokeMethod('onCreate1',{'signature':signature,'pinCode':pinCode}).then((value) {
+    await channel.invokeMethod('onCreate1',{'signature':signature,'pinCode':pinCode,'userData':'hello'}).then((value) {
       print("value form b=native is ${value.toString()}");
       setState(() {
         Map<Object?, Object?> originalMap = value;
@@ -77,7 +83,6 @@ class _BuySealPageState extends State<BuySealPage> {
             newMap[key] = value;
           }
         });
-
          certificateData = newMap ;
          input=certificateData['key6'];
         List<String> pairs = input.split(', ');
@@ -130,205 +135,222 @@ class _BuySealPageState extends State<BuySealPage> {
     }
   }
 
-
   Widget _buildSDData({required BuildContext context}){
-
-    if(
-        certificateData["key2"].toString().isNotEmpty
-        &&
-        certificateData["key5"].toString().isNotEmpty
-    ){
-      return Column(
-        children: [
-          Container(
-              height: 50.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.sp),
-              decoration: BoxDecoration(
-                  color: Palette.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10.sp)),
-                border: Border.all(color: Palette.mainGreen)
-
-              ),
-              child: Column(
+    // if(
+    //     certificateData["key2"].toString().isNotEmpty
+    //     &&
+    //     certificateData["key5"].toString().isNotEmpty
+    // ){
+      return FutureBuilder(
+          future: call(signature: signature, pinCode: pinCode),
+          builder: (context,snapshot){
+            if(snapshot.hasError){
+              return Text("error");
+            }else if(snapshot.connectionState==ConnectionState.waiting){
+              return const Center(child: CircularProgressIndicator(),);
+            }else if(certificateData["key2"].toString().isNotEmpty
+                &&
+                certificateData["key5"].toString().isNotEmpty){
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(flex:4,child: Text(AppGeneralTrans.egyTrustTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.sp,color: Palette.mainGreen),)),
-                      Expanded(flex:1, child: Icon(Icons.sd,color: Palette.mainGreen,size: 32.sp,))
-                    ],
-                  ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
-                  Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 8.sp),
-                    child: Wrap(
-                      children: [
-                        Text(AppGeneralTrans.serialNumTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),),
-                         Text(
-                           "${certificateData["key2"].toString().isEmpty ?AppGeneralTrans.waitTxt:certificateData["key2"]}",
-                           style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),)
-                      ],
-                    ),
-                  ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
+                  Container(
+                      height: 50.h,
+                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                      decoration: BoxDecoration(
+                          color: Palette.white,
+                          borderRadius: BorderRadius.all(Radius.circular(10.sp)),
+                          border: Border.all(color: Palette.mainGreen)
 
-                  /// start of user data
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(flex:1,child: Text(AppGeneralTrans.companyTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
-                        Expanded(flex:4,child: Text(
-                          "${result['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:AppGeneralTrans.egyTrustTxt}",
-                          style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
-                      ],
-                    ),
-                  ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(flex:2,child: Text(AppGeneralTrans.emailTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
-                        Expanded(flex:5,child: Text(
-                          "${certificateData['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:result['EMAILADDRESS']}",
-                          style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
-                      ],
-                    ),
-                  ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(flex:1,child: Text(AppGeneralTrans.client,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
-                        Expanded(flex:4,child: Text(
-                          "${certificateData['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:result['O']}",
-                          style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
-                      ],
-                    ),
-                  ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(flex:2,child: Text(AppGeneralTrans.natiionalIdTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
-                        Expanded(flex:5,child: Text(
-                          "${certificateData['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:result['OU']}",
-                          style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
-                      ],
-                    ),
-                  ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(flex:2,child: Text(AppGeneralTrans.VategTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
-                        Expanded(flex:5,child: Text(
-                          "${certificateData['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:result['OID.2.5.4.97']}",
-                          style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
-                      ],
-                    ),
-                  ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(flex:4,child: Text(AppGeneralTrans.egyTrustTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.sp,color: Palette.mainGreen),)),
+                              Expanded(flex:1, child: Icon(Icons.sd,color: Palette.mainGreen,size: 32.sp,))
+                            ],
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
+                          Padding(
+                            padding:  EdgeInsets.symmetric(vertical: 8.sp),
+                            child: Wrap(
+                              children: [
+                                Text(AppGeneralTrans.serialNumTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),),
+                                Text(
+                                  "${certificateData["key2"].toString().isEmpty ?AppGeneralTrans.waitTxt:certificateData["key2"]}",
+                                  style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),)
+                              ],
+                            ),
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
+
+                          /// start of user data
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(flex:1,child: Text(AppGeneralTrans.companyTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
+                                Expanded(flex:4,child: Text(
+                                  "${result['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:AppGeneralTrans.egyTrustTxt}",
+                                  style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
+                              ],
+                            ),
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(flex:2,child: Text(AppGeneralTrans.emailTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
+                                Expanded(flex:5,child: Text(
+                                  "${certificateData['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:result['EMAILADDRESS']}",
+                                  style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
+                              ],
+                            ),
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(flex:1,child: Text(AppGeneralTrans.client,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
+                                Expanded(flex:4,child: Text(
+                                  "${certificateData['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:result['O']}",
+                                  style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
+                              ],
+                            ),
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(flex:2,child: Text(AppGeneralTrans.natiionalIdTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
+                                Expanded(flex:5,child: Text(
+                                  "${certificateData['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:result['OU']}",
+                                  style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
+                              ],
+                            ),
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(flex:2,child: Text(AppGeneralTrans.VategTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),)),
+                                Expanded(flex:5,child: Text(
+                                  "${certificateData['key6'].toString().isEmpty?AppGeneralTrans.waitTxt:result['OID.2.5.4.97']}",
+                                  style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),))
+                              ],
+                            ),
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
 
 
-                  /// end of user data
-                  Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 8.sp),
-                    child: Wrap(
-                      children: [
-                        Text(AppGeneralTrans.certStartDateTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),),
-                        Text(
-                          "${certificateData["key3"].toString().isEmpty?AppGeneralTrans.waitTxt:certificateData['key3']}"
-                          ,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),)
-                      ],
-                    ),
-                  ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
-                  Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 8.sp),
-                    child: Wrap(
+                          /// end of user data
+                          Padding(
+                            padding:  EdgeInsets.symmetric(vertical: 8.sp),
+                            child: Wrap(
+                              children: [
+                                Text(AppGeneralTrans.certStartDateTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen),),
+                                Text(
+                                  "${certificateData["key3"].toString().isEmpty?AppGeneralTrans.waitTxt:certificateData['key3']}"
+                                  ,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue),)
+                              ],
+                            ),
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
+                          Padding(
+                            padding:  EdgeInsets.symmetric(vertical: 8.sp),
+                            child: Wrap(
 
-                      children: [
-                        Text(AppGeneralTrans.certEndDateTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen,),),
-                        Text(
-                          "${certificateData["key4"].toString().isEmpty?AppGeneralTrans.waitTxt:certificateData["key4"]}",
-                          style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue,),)
-                      ],
-                    ),
+                              children: [
+                                Text(AppGeneralTrans.certEndDateTxt,style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainGreen,),),
+                                Text(
+                                  "${certificateData["key4"].toString().isEmpty?AppGeneralTrans.waitTxt:certificateData["key4"]}",
+                                  style:   Theme.of(context).textTheme.bodyMedium!.copyWith(color: Palette.mainBlue,),)
+                              ],
+                            ),
+                          ),
+                          Divider(color: Palette.mainGreen,height: 2.sp,),
+
+                        ],
+                      )
                   ),
-                  Divider(color: Palette.mainGreen,height: 2.sp,),
+                  Center(child:
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 16.sp),
+                    child: Padding(
+                      padding:  EdgeInsets.symmetric(vertical: 12.sp),
+                      child: SizedBox(
+                        // height: 30.sp,
+                        width: 60.w,
+                        child: TextButton(
+                          onPressed: ()async{
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ExtractSignaturePage()));
+                            // setState(() {
+                            //   isSealRequested=true;
+                            // });
+                          },
+                          style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStateProperty.all<Color>(
+                                  Palette.mainGreen),
+                              foregroundColor:
+                              MaterialStateProperty.all<Color>(
+                                  Colors.white),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(35.0),
+                                      side:
+                                      BorderSide(color: Palette.mainGreen)))),
+                          child:   Text(
+                            AppGeneralTrans.showSignatureTxt,
+                            style:const  TextStyle(
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),),
+
+
+                  if(isSealRequested==true)
+                    Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(32.sp),
+                        margin: EdgeInsets.symmetric(vertical: 16.sp),
+
+                        decoration: BoxDecoration(
+                          color: Palette.white,
+                          borderRadius: BorderRadius.all(Radius.circular(10.sp)),
+                          border: Border.all(color: Palette.textHint),
+                        ),
+                        child:Center(
+                          child: QrImage(
+                            data: "${certificateData['key5']}",
+                            version: QrVersions.auto,
+                            size: 200.0,
+                            foregroundColor: Colors.black,
+                            backgroundColor: Colors.transparent,
+                          ),
+                        )
+
+                    )
+
+
 
                 ],
-              )
-          ),
-          Center(child:
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 16.sp),
-            child: Padding(
-              padding:  EdgeInsets.symmetric(vertical: 12.sp),
-              child: SizedBox(
-                height: 30.sp,
-                width: 60.w,
-                child: TextButton(
-                  onPressed: ()async{
-                    setState(() {
-                      isSealRequested=true;
-                    });
-                  },
-                  style: ButtonStyle(
-                      backgroundColor:
-                      MaterialStateProperty.all<Color>(
-                          Palette.mainGreen),
-                      foregroundColor:
-                      MaterialStateProperty.all<Color>(
-                          Colors.white),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.circular(35.0),
-                              side:
-                              BorderSide(color: Palette.mainGreen)))),
-                  child:   Text(
-                    AppGeneralTrans.showSignatureTxt,
-                    style:const  TextStyle(
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ),),
+              );
+            }else{
+              return Center(
+                child: Text(certificateData["key1"].toString()),);
+            }
 
-
-          if(isSealRequested==true)
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(32.sp),
-            margin: EdgeInsets.symmetric(vertical: 16.sp),
-
-            decoration: BoxDecoration(
-              color: Palette.white,
-              borderRadius: BorderRadius.all(Radius.circular(10.sp)),
-              border: Border.all(color: Palette.textHint),
-            ),
-            child:Center(
-              child: QrImage(
-                data: "${certificateData['key5']}",
-                version: QrVersions.auto,
-                size: 200.0,
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.transparent,
-              ),
-            )
-
-          )
-
-
-
-        ],
-      );
-    }else{
-      return Center(
-        child: Text(certificateData["key1"].toString()),);
-    }
+      });
+    // }else{
+    //   return Center(
+    //     child: Text(certificateData["key1"].toString()),);
+    // }
 
   }
 

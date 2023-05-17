@@ -234,3 +234,83 @@ class CustomDateTextField extends StatelessWidget {
     );
   }
 }
+
+
+class MobileNumberTextField extends StatelessWidget {
+  final String labelHint;
+  final TextEditingController mobileTextEditingController;
+  final String? Function(String? val)? validator;
+  final Function(dynamic val)?onChanged;
+  final String?fieldHint;
+
+
+  const MobileNumberTextField({
+    Key? key,required this.labelHint,
+    required this.mobileTextEditingController,
+    this.validator,
+    this.onChanged,
+    this.fieldHint,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 4.sp),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.sp),
+            child: Text(
+              labelHint ?? '',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontWeight: FontWeight.w600, color: Palette.mainBlue),
+            ),
+          ),
+          Container(
+            // height: 0.sp,
+            margin: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp),
+            child: TextFormField(
+              maxLength: 8,
+              controller: mobileTextEditingController,
+              keyboardType:TextInputType.number,
+              validator:validator,
+              onChanged:onChanged ,
+              style: Theme.of(context).textTheme.bodyMedium,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(vertical: 21.0, horizontal: 10.0),
+
+                hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.normal),
+                hintText: fieldHint ?? "",
+                isDense: true,
+                errorStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.normal),
+                // prefixIconConstraints: BoxConstraints(
+                //   minHeight: Dimens.space24,
+                //   maxHeight: Dimens.space24,
+                // ),
+                enabledBorder: OutlineInputBorder(
+                  gapPadding: 0,
+                  borderRadius: BorderRadius.circular(Dimens.space4),
+                  borderSide:  BorderSide(color: Palette.disable),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  gapPadding: 0,
+                  borderRadius: BorderRadius.circular(Dimens.space4),
+                  borderSide:  BorderSide(color: Palette.mainBlue),
+                ),
+                errorBorder: OutlineInputBorder(
+                  gapPadding: 0,
+                  borderRadius: BorderRadius.circular(Dimens.space4),
+                  borderSide:  BorderSide(color: Palette.colorRed),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}

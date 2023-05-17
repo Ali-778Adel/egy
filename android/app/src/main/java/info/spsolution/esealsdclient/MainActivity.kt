@@ -40,6 +40,7 @@ class MainActivity : FlutterFragmentActivity() {
 
     var sig:String="";
     var pin:String="";
+    var uInputData="";
 
     var callBackResponse:String=""
     var certificateSignature:String=""
@@ -57,8 +58,9 @@ class MainActivity : FlutterFragmentActivity() {
                 val  signature=call.argument<String>("signature")
                 val  pinCode=call.argument<String>("pinCode")
                 if (signature != null && pinCode !=null) {
-                    sig=signature
-                    pin=pinCode
+                    sig = signature
+                    pin = pinCode
+                    uInputData = call.argument("userData") ?: "hello"
                 }
                     val map = mutableMapOf<String, Any>()
                     map["key1"] = initializeESealSD()
@@ -66,7 +68,7 @@ class MainActivity : FlutterFragmentActivity() {
                     map["key3"] = startDate
                     map["key4"] = endDate
                     map["key5"] = certificateSignature
-                    map["key6"] ="CN=ناشد ذكرى قزمان, EMAILADDRESS=28701028800073@egypttrust.com, O=ناشد ذكرى قزمان, OU=National ID - 28701028800073, OID.2.5.4.97=VATEG-627824935, C=EG"
+                    map["key6"] =userData
 //                        userData
 
                 result.success(map)
@@ -77,13 +79,17 @@ class MainActivity : FlutterFragmentActivity() {
             if(call.method=="getConfigs"){
                 val  signature=call.argument<String>("signature")
                 val  pinCode=call.argument<String>("pinCode")
+                val  userInputData=call.argument<String>("userData")
+
                 if (signature != null && pinCode !=null) {
                     sig=signature
                     pin=pinCode
+                    uInputData = userInputData ?: "hello"
                 }
 
                 println("signature is ${signature}")
                 println("signature is ${pinCode}")
+                println("userInputData is  ${userInputData}")
 
                 result.success("i recieved method ");
             }
@@ -105,7 +111,7 @@ class MainActivity : FlutterFragmentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initializeESealSD(): String {
-        HelloFromJNI("sdcardpath",pin,sig);
+        HelloFromJNI("sdcardpath",pin,sig,uInputData);
         var message = "This test takes a long time, do not rotate."
 
         // Load the native library
@@ -265,7 +271,7 @@ class MainActivity : FlutterFragmentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun TestESealSD(sdcardpath: String, callback: (String) -> Unit) {
         Thread(Runnable {
-            val tokenInfo = HelloFromJNI(sdcardpath,pin,sig);
+            val tokenInfo = HelloFromJNI(sdcardpath,pin,sig,uInputData);
             if(tokenInfo is TokenInfo) {
                 var certificate: X509Certificate? = null;
                 if(tokenInfo.getCert()!=null) {
@@ -327,7 +333,7 @@ class MyCountDownTimer(startTime: Long, interval: Long) :
 
 }
 
-external fun HelloFromJNI(path: String,piCode:String,signature :String): Object
+external fun HelloFromJNI(path: String,piCode:String,signature :String,userInputData:String): Object
 external fun FinalizeFromJNI(): Boolean
 
 

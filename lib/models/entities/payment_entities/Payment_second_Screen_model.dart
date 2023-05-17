@@ -29,6 +29,8 @@ class PaymentSecondScreenArgsModel {
   final int?serviceStatusId;
   final int?subscriptionId;
   final double?total;
+  final String ?selectedServiceProvider;
+  final String?authorizedSelectedServiceProvider;
 
   PaymentSecondScreenArgsModel(
       {
@@ -57,7 +59,9 @@ class PaymentSecondScreenArgsModel {
         this.authorized,
         this.discountNotification,
         this.freeMissions,
-        this.total
+        this.total,
+        this.selectedServiceProvider,
+        this.authorizedSelectedServiceProvider,
 
       });
 }

@@ -9,7 +9,7 @@ void* lib;
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jclass clazz, jstring jpath,jstring jpinCode,jstring jsignature) {
+Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jclass clazz, jstring jpath,jstring jpinCode,jstring jsignature,jstring juserInputData) {
     string returnmsg="";
 
     lib = dlopen("libeSealSD.so", RTLD_LAZY);
@@ -66,6 +66,9 @@ Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jcla
         std::string signature(naitveSignature);
         env->ReleaseStringUTFChars(jsignature, naitveSignature);
 
+        const char *naitveuserInputData = env->GetStringUTFChars(juserInputData, 0);
+        std::string userInputData(naitveuserInputData);
+        env->ReleaseStringUTFChars(juserInputData, naitveSignature);
 
         int login = loginFirstSlot(pinCode,signature);
         /*
@@ -103,7 +106,8 @@ Java_info_spsolution_esealsdclient_MainActivityKt_HelloFromJNI(JNIEnv *env, jcla
                                        pininit);
                 bool pk =acquireSessionPrivKey();
                 if(pk){
-                    string sign = signCades("hello");
+                    //parameter from text field
+                    string sign = signCades(userInputData);
                 }else{
                     returnmsg +="\n pk is false " + to_string(login);
                 }

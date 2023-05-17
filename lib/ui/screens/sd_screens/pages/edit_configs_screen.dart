@@ -1,7 +1,4 @@
-
 import 'package:fl_egypt_trust/models/utils/themes/app_general_trans.dart';
-import 'package:fl_egypt_trust/ui/screens/sd_screens/pages/buySealPage.dart';
-import 'package:fl_egypt_trust/ui/screens/sd_screens/pages/qr_scanner.dart';
 import 'package:fl_egypt_trust/ui/screens/widgets/custom_app_bar.dart';
 import 'package:fl_egypt_trust/ui/screens/widgets/custom_text_field.dart';
 import 'package:fl_egypt_trust/ui/screens/widgets/toast_widget.dart';
@@ -13,7 +10,6 @@ import '../../../../di/dependency_injection.dart';
 import '../../../../models/entities/sd_entities/sd_configs_entity.dart';
 import '../../../../models/utils/language/localizations_delegate.dart';
 import '../../../../models/utils/themes/colors.dart';
-import '../../bottom_navigations/bottom_navigation_handler.dart';
 import '../../widgets/bottom_message_confirmation.dart';
 import '../../widgets/custom_password_text_field.dart';
 import '../../widgets/qr_scan_widget.dart';
@@ -228,12 +224,12 @@ checkConfigs().then((value) {
         message: appLocalization.unsavedChangesMessage,
         positiveText: appLocalization.discard,
         onPositiveTap: (){
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const HomeNavigationScreen()), (route) => false);
+Navigator.pop(context);
         },
       );
       return;
     }
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const HomeNavigationScreen()), (route) => false);
+    Navigator.pop(context);
   }
 
   bool _showDiscard() {

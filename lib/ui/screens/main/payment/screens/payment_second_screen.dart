@@ -20,6 +20,7 @@ import '../../../widgets/cities_drop_down.dart';
 import '../../../widgets/connection_error widget.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/cutom_buttons.dart';
+import '../../../widgets/service_supplier_drop_down.dart';
 import '../../../widgets/subscribtion_drop_down.dart';
 import '../bloc/payment_second_form_bloc/bloc.dart';
 import '../bloc/payment_second_form_bloc/events.dart';
@@ -58,6 +59,8 @@ class _PaymentSecondFormScreenState extends State<PaymentSecondFormScreen> {
   final authorizedNameController = TextEditingController();
   final authorizedPhoneController = TextEditingController();
   final authorizedNationalIdController = TextEditingController();
+   String?selectedMobileServiceProvider;
+   String?authorizedSelectedServiceProvider;
 
   double total=0;
   bool freeMissions = false;
@@ -115,6 +118,8 @@ class _PaymentSecondFormScreenState extends State<PaymentSecondFormScreen> {
         discountNotification: discountNotification,
         freeMissions: freeMissions,
         subscriptionId: subscriptionId,
+        selectedServiceProvider: selectedMobileServiceProvider,
+        authorizedSelectedServiceProvider: authorizedSelectedServiceProvider,
         // total: total
     );
   }
@@ -158,6 +163,9 @@ class _PaymentSecondFormScreenState extends State<PaymentSecondFormScreen> {
       discountNotification =
           paymentSecondScreenArgs.discountNotification ?? false;
       subscriptionId=paymentSecondScreenArgs.subscriptionId??0;
+      selectedMobileServiceProvider=paymentSecondScreenArgs.selectedServiceProvider??"012";
+      authorizedSelectedServiceProvider=paymentSecondScreenArgs.authorizedSelectedServiceProvider??'012';
+
 
      if(selectedStateObject==null){
        BlocProvider.of<PaymentSecondFormStatesBloc>(context)
@@ -287,20 +295,34 @@ class _PaymentSecondFormScreenState extends State<PaymentSecondFormScreen> {
             ),
 
             /// second row contain mobile number and email address
-            CustomTextField(
-              maxLength: 11,
-                textEditingController: phoneNumberController,
-                textFieldTypes: TextFieldTypes.phone,
-                labelHint:getTrans(state: stat, txtKey: 'mobileNumberTxt'),
-                fieldHint:
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex:4,child: MobileNumberTextField(
+                    mobileTextEditingController: phoneNumberController,
+                    labelHint:getTrans(state: stat, txtKey: 'mobileNumberTxt'),
+                    fieldHint:
                     ' ${AppGeneralTrans.enterTxt}'
                         ' ${getTrans(state: stat, txtKey: 'mobileNumberTxt')}',
-                validator: (val) {
-                  return checkVal(
-                      val: val,
-                      condition: val!.length != 11,
-                      errorMessage: AppGeneralTrans.mobileValidationTxt);
-                }),
+                    validator: (val) {
+                      return checkVal(
+                          val: val,
+                          condition: val!.length != 9,
+                          errorMessage: AppGeneralTrans.mobileValidationTxt);
+                    }),),
+                Expanded(flex: 3, child:ServiceSupplierDropdown(
+                  selectedProvider: selectedMobileServiceProvider??"012",
+                  onChanged: (val){
+                    setState(() {
+                      selectedMobileServiceProvider=val;
+                    });
+                  },
+                ) ),
+
+              ],
+            ),
+
+
             CustomTextField(
                 textEditingController: emailAddressController,
                 textFieldTypes: TextFieldTypes.email,
@@ -675,20 +697,33 @@ class _PaymentSecondFormScreenState extends State<PaymentSecondFormScreen> {
                           val: val, condition: val!.isEmpty, errorMessage: AppGeneralTrans.commissionerNameValidationTxt);
                     },
                   ),
-                  CustomTextField(
-                    maxLength: 11,
-                      textEditingController: authorizedPhoneController,
-                      textFieldTypes: TextFieldTypes.phone,
-                      labelHint: getTrans(state: stat, txtKey: 'comissionerphoneTxt'),
-                      fieldHint:
-                          '${AppGeneralTrans.enterTxt}'
-                              ' ${getTrans(state: stat, txtKey: 'comissionerphoneTxt')}',
-                      validator: (val) {
-                        return checkVal(
-                            val: val,
-                            condition: val!.length != 11,
-                            errorMessage:AppGeneralTrans.commissionerMobileValidationTxt);
-                      }),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex:4,child: MobileNumberTextField(
+                          mobileTextEditingController: authorizedPhoneController,
+                          labelHint:getTrans(state: stat, txtKey: 'mobileNumberTxt'),
+                          fieldHint:
+                          ' ${AppGeneralTrans.enterTxt}'
+                              ' ${getTrans(state: stat, txtKey: 'mobileNumberTxt')}',
+                          validator: (val) {
+                            return checkVal(
+                                val: val,
+                                condition: val!.length != 9,
+                                errorMessage: AppGeneralTrans.mobileValidationTxt);
+                          }),),
+                      Expanded(flex: 3, child:ServiceSupplierDropdown(
+                        selectedProvider: authorizedSelectedServiceProvider??"012",
+                        onChanged: (val){
+                          setState(() {
+                            authorizedSelectedServiceProvider=val;
+                          });
+                        },
+                      ) ),
+
+                    ],
+                  ),
+
                   CustomTextField(
                     maxLength: 14,
                     textEditingController: authorizedNationalIdController,
